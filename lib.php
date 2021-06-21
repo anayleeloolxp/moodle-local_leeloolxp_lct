@@ -189,7 +189,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $attemptid = $event->objectid;
 
     if (isset($attemptid) && isset($attemptid) != '') {
-        $checksynced = $DB->get_record_sql("SELECT count(sync.teamnio_task_id) as synced FROM {quiz_attempts} as a left join {course_modules} as cm on a.quiz = cm.instance left join {modules} as m on m.id = cm.module left join {tool_leeloolxp_sync} as sync on sync.activityid = cm.id where a.id = $attemptid and m.name = 'quiz' and sync.enabled = 1");
+        $checksynced = $DB->get_record_sql("SELECT count(sync.teamnio_task_id) synced FROM {quiz_attempts} a left join {course_modules} cm on a.quiz = cm.instance left join {modules} m on m.id = cm.module left join {tool_leeloolxp_sync} sync on sync.activityid = cm.id where a.id = ? and m.name = ? and sync.enabled = ?", array($attemptid, 'quiz', 1));
 
         if ($checksynced->synced == 0) {
             return true;
@@ -316,7 +316,6 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         return "";
         }
 
-        //alert('<?php echo $quizname; ?>');
         setCookie("quiztracking", 0, 1);
         localStorage.setItem("quiztracking",0);
         var user_firstname_last_name = '<?php echo $userfirstnamelastname; ?>';
@@ -343,7 +342,6 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 if (this.readyState == 4 && this.status == 200) {
                     console.log(this.responseText);
                     if(this.responseText=="0") {
-                        //var emailnew = '<?php echo $useremail; ?>';
                         document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremail . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
                         window.stop();
                     } else {
