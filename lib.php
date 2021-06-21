@@ -29,7 +29,7 @@ require_once(dirname(dirname(__DIR__)) . '/config.php'); // add config as moodle
 
 /**
  * Attempt submited event for quiz module.
- * @param stdClass|stdObject $event data
+ * @param mod_quiz\event\attempt_submitted $event
  * @return mixed string if ok true if license issue.
  */
 function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted $event) {
@@ -165,11 +165,11 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
 
 /**
  * Attempt started event for quiz module.
- * @param stdClass|stdObject $event data
+ * @param mod_quiz\event\attempt_started $event
  * @return mixed string if ok true if license issue.
  */
 function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $event) {
-    
+
     global $DB;
     global $USER;
     global $CFG;
@@ -286,7 +286,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     date_default_timezone_set("America/Costa_Rica"); // GMT-6
     $workingdate = date('Y-m-d');
     $notloginmessage = get_string('not_login_message', 'local_leeloolxp_lct'); // You are not login on tracker, please login.
-    $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); //Tracking started.
+    $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); // Tracking started.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
     ?>
     <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
@@ -453,7 +453,7 @@ function local_leeloolxp_lct_check_user_teamnio($email, $leeloolxpurl) {
 
 /**
  * On Attempt Abandoned.
- * @param stdClass|stdObject $event event
+ * @param mod_quiz\event\attempt_abandoned $event
  * @return bool true
  */
 function local_leeloolxp_lct_attempt_abandoned(mod_quiz\event\attempt_abandoned $event) {
