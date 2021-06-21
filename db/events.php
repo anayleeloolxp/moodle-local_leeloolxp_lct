@@ -47,5 +47,3 @@ $observers = array(
         'internal' => false,
     ),
 );
-
-?>
