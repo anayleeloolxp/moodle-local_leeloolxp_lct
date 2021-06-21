@@ -1,0 +1,495 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Main Functions
+ *
+ * @package    local_leeloolxp_lct
+ * @copyright  2020 Leeloo LXP (https://leeloolxp.com)
+ * @author     Leeloo LXP <info@leeloolxp.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once (dirname(dirname(__DIR__)) . '/config.php'); // add config as moodle instance
+
+/**
+ * Attempt submited event for quiz module.
+ * @param stdClass|stdObject data
+ * @return mixed string if ok true if license issue.
+ */
+function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted $event) {
+
+    global $CFG;
+
+    $certitrackerenable = get_config('local_leeloolxp_lct')->certitrackerenable;
+
+    if ($certitrackerenable == '0') {
+        return true;
+    }
+
+    $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
+    $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
+    $quizname = $quiz->name;
+
+    $leeloolxplicense = get_config('local_leeloolxp_lct')->license;
+
+    $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
+    $postdata = '&license_key=' . $leeloolxplicense;
+
+    $curl = new curl;
+
+    $options = array(
+        'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_HEADER' => false,
+        'CURLOPT_POST' => 1,
+    );
+
+    if (!$output = $curl->post($url, $postdata, $options)) {
+        return true;
+    }
+
+    $infoleeloolxp = json_decode($output);
+
+    $leeloolxpurl = $infoleeloolxp->data->install_url;
+
+    /* get task_id from teamnio */
+    $url = $leeloolxpurl . "/admin/sync_moodle_course/get_task_id_by_name/" . urlencode($quizname);
+
+    $postdata = '';
+
+    $curl = new curl;
+
+    $options = array(
+        'CURLOPT_RETURNTRANSFER' => true,
+    );
+
+    if (!$output = $curl->post($url, $postdata, $options)) {
+        return true;
+    }
+
+    $taskid = $output;
+
+    date_default_timezone_set("America/Costa_Rica"); // GMT-6.
+
+    $workingdate = date('Y-m-d');
+
+    $trackerstopmessage = get_string('tracker_stop_message', 'local_leeloolxp_lct'); // Tracking stop on exam.
+    echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
+    ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
+	<!-- Javascript code for websocket communication with DA and Teamnio too -->
+	<script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
+	<script type="text/javascript">
+
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires="+d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var quiztracking = localStorage.getItem("quiztracking");
+        if( quiztracking == 1 ){
+            var MyDate = new Date();
+            var MyDateString;
+            var teamnio_url = '<?php echo $leeloolxpurl; ?>';
+            MyDate.setDate(MyDate.getDate());
+            MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth()+1)).slice(-2) + "-" + ("0" + MyDate.getDate()).slice(-2);
+            var myArray = {};
+            myArray.task_id = "<?php echo $taskid; ?>";
+            myArray.working_date = '<?php echo $workingdate ?>';
+            myArray.status = "0";
+            myArray.task_type = "tct";
+            myArray.user_id = localStorage.getItem("user_id");
+
+            var wsUri = "wss://teamnio.com/wssteamnio"; // websocket url
+            websocket = new ReconnectingWebSocket( wsUri ); // socket reconnect
+            websocket.onopen = function(ev) {
+                var message_input   = JSON.stringify(myArray);
+                var msg = {
+                    type: "quiztype",
+                    message: JSON.parse(message_input),
+                };
+                websocket.send(JSON.stringify(msg)); // message send
+            }
+            websocket.onmessage = function(ev) {
+                var response        = JSON.parse(ev.data);
+                console.log(response);
+                if(response.message.status=='1'){
+                    //submit_quiz_frm();
+                }
+            };
+            localStorage.setItem("status_image","gray"); // gray tracking status again
+            document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstopmessage; ?>";
+            localStorage.setItem("quiztracking",0);
+            setCookie("quiztracking", 0, 1);
+        }
+
+	</script>
+	<?php
+    for ($i = 0; $i < 50000; $i++) {
+        echo "<div></div>";
+    }
+    return true; // finaly return true
+}
+
+/**
+ * Attempt started event for quiz module.
+ * @param stdClass|stdObject data
+ * @return mixed string if ok true if license issue.
+ */
+function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $event) {
+    
+    global $DB;
+    global $USER;
+    global $CFG;
+
+    $useremail = $USER->email; // user email from moodle global.
+    $username = $USER->username; // username from moodle global.
+
+    $course = $DB->get_record('course', array('id' => $event->courseid));
+    $userfirstnamelastname = fullname($USER);
+
+    $certitrackerenable = get_config('local_leeloolxp_lct')->certitrackerenable;
+
+    if ($certitrackerenable == '0') {
+        return true;
+    }
+
+    $attemptid = $event->objectid;
+
+    if (isset($attemptid) && isset($attemptid) != '') {
+        $checksynced = $DB->get_record_sql("SELECT count(sync.teamnio_task_id) as synced FROM {quiz_attempts} as a left join {course_modules} as cm on a.quiz = cm.instance left join {modules} as m on m.id = cm.module left join {tool_leeloolxp_sync} as sync on sync.activityid = cm.id where a.id = $attemptid and m.name = 'quiz' and sync.enabled = 1");
+
+        if ($checksynced->synced == 0) {
+            return true;
+        }
+    } else {
+        return true;
+    }
+
+    $certitrackeruserenable = get_config('local_leeloolxp_lct')->certitrackeruserenable;
+
+    if ($certitrackeruserenable) {
+        $usercreateflag = 'yes';
+    } else {
+        $usercreateflag = 'no';
+    }
+
+    $leeloolxplicense = get_config('local_leeloolxp_lct')->license;
+
+    $url = 'https://leeloolxp.com/api_moodle.php/?action=page_info';
+    $postdata = '&license_key=' . $leeloolxplicense;
+
+    $curl = new curl;
+
+    $options = array(
+        'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_HEADER' => false,
+        'CURLOPT_POST' => 1,
+    );
+
+    if (!$output = $curl->post($url, $postdata, $options)) {
+        return true;
+    }
+
+    $infoleeloolxp = json_decode($output);
+
+    $leeloolxpurl = $infoleeloolxp->data->install_url;
+
+    $userexistonteamnio = local_leeloolxp_lct_check_user_teamnio($useremail, $leeloolxpurl);
+
+    if ($userexistonteamnio == '0') {
+        if ($usercreateflag == 'no') {
+            return true;
+        }
+    }
+
+    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_lct_status_by_email/' . $useremail;
+    $curl = new curl;
+    $options = array(
+        'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_HEADER' => false,
+        'CURLOPT_POST' => 1,
+    );
+    if (!$userstatusonteamnio = $curl->post($url, $postdata, $options)) {
+        return true;
+    }
+    if ($userstatusonteamnio == 0) {
+        return true;
+    }
+
+    $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
+    $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
+    $quizname = $quiz->name; // moodle quiz  name.
+    $course = $DB->get_record('course', array('id' => $event->courseid));
+    $groupnamequery = $DB->get_record('groups', array('courseid' => $course->id));
+
+    if (!empty($groupnamequery)) {
+        $groupname = $groupnamequery->name;
+    } else {
+        $groupname = '';
+    }
+
+    $url = $leeloolxpurl . "/admin/sync_moodle_course/create_task_version/?task_name=" . urlencode($quizname) . "&username=" . urlencode($username) . "&group_name=" . urlencode($groupname) . '&email=' . urlencode($useremail) . '&activity_id=' . $event->contextinstanceid;
+
+    $postdata = '';
+
+    $curl = new curl;
+
+    $options = array(
+        'CURLOPT_RETURNTRANSFER' => true,
+    );
+
+    if (!$output = $curl->post($url, $postdata, $options)) {
+        return true;
+    }
+
+    $taskarray = json_decode($output);
+
+    if ($output == '0' || !isset($taskarray->task_id)) {
+        return true;
+    }
+
+    $taskid = $taskarray->task_id;
+
+    date_default_timezone_set("America/Costa_Rica"); // GMT-6
+    $workingdate = date('Y-m-d');
+    $notloginmessage = get_string('not_login_message', 'local_leeloolxp_lct'); // You are not login on tracker, please login.
+    $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); //Tracking started.
+    echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
+    ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
+	<!-- websocket communication with javascript  -->
+	<script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
+	<script type="text/javascript">
+
+        function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+        }
+
+        //alert('<?php echo $quizname; ?>');
+        setCookie("quiztracking", 0, 1);
+        localStorage.setItem("quiztracking",0);
+		var user_firstname_last_name = '<?php echo $userfirstnamelastname; ?>';
+	  	var MyDate = new Date();
+	    var MyDateString;
+	    var teamnio_url = '<?php echo $leeloolxpurl; ?>';
+	    MyDate.setDate(MyDate.getDate());
+	    MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth()+1)).slice(-2) + "-" + ("0" + MyDate.getDate()).slice(-2);
+	    var myArray = {};
+	    myArray.task_id = "<?php echo $taskid; ?>";
+
+	    myArray.working_date = '<?php echo $workingdate ?>';
+	    myArray.status = "1";
+	    function check_login(email) {
+	    	var result           = "";
+	        var characters       = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	        var charactersLength = characters.length;
+	        for ( var i = 0; i < 5; i++ ) {
+	                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	            }
+
+	        var xhttp_S = new XMLHttpRequest();
+	        xhttp_S.onreadystatechange = function() {
+	            if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.responseText);
+	                if(this.responseText=="0") {
+                        //var emailnew = '<?php echo $useremail; ?>';
+                        document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremail . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
+                        window.stop();
+	                    /*var con = confirm("<?php echo $notloginmessage; ?>");
+	                    if(con) {
+	                       window.stop();
+	                       check_login(email);
+	                    } else {   }*/
+	                } else {
+	                    myArray.user_id = this.responseText;
+	                    localStorage.setItem("user_id",myArray.user_id);
+	                    var wsUri = "wss://teamnio.com/wssteamnio";
+	                    websocket = new ReconnectingWebSocket( wsUri );
+	                    websocket.onopen = function(ev) {
+	                        var message_input   = JSON.stringify(myArray);
+	                        var msg = {
+	                        	type:'quiztype',
+	                            message: JSON.parse(message_input),
+	                        };
+	                        websocket.send(JSON.stringify(msg));
+	                    }
+	                    websocket.onmessage = function(ev) {
+	                        var response        = JSON.parse(ev.data);
+                            console.log(response);
+                            localStorage.setItem("quiztracking",1);
+                            setCookie("quiztracking", 1, 1);
+                            document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
+                            location.reload();
+                        };
+                        return true;
+	                }
+	            }
+	    	};
+	        xhttp_S.open("GET", teamnio_url+"/admin/sync_moodle_course/login_status/?rand="+result+"&user_email="+email+'&name='+user_firstname_last_name, true);
+            xhttp_S.send();
+            //window.stop();
+            //return true;
+            return false;
+		}
+	    var xhttp = new XMLHttpRequest();
+	    xhttp.onreadystatechange = function() {
+	        if (this.readyState == 4 && this.status == 200) {
+	            myArray.user_id = this.responseText;
+	            localStorage.setItem("user_id",myArray.user_id);
+                var logged_in_or_not =  check_login('<?php echo $useremail; ?>');
+                console.log('check_login');
+                console.log(logged_in_or_not);
+	        	if(logged_in_or_not) {
+	        		var wd =  "";
+				    var wsUri = "wss://teamnio.com/wssteamnio";
+				    websocket = new ReconnectingWebSocket( wsUri );
+				    websocket.onopen = function(ev) {
+				        var message_input   = JSON.stringify(myArray);
+				        var msg = {
+				        	type:'quiztype',
+				            message: JSON.parse(message_input),
+				        };
+				        websocket.send(JSON.stringify(msg));
+					}
+				    websocket.onmessage = function(ev) {
+				        var response   = JSON.parse(ev.data);
+				        console.log(response);
+				        //another_method();
+                       };
+                    //document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
+                    document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage . '<div class=\'lct_buttons\'><button onclick=\'location.reload();\'>Ok</button></div>'; ?>";
+                    //window.stop();
+				    //alert('<?php echo $trackerstartmessage; ?>');
+				    localStorage.setItem("status_image","orange");
+					websocket.onerror   = function(ev){ console.log(ev); };
+					websocket.onclose   = function(ev){ alert("Closed"); };
+	        	}else{
+                    document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremail . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
+                    window.stop();
+                }
+	        }
+	    };
+	    xhttp.open("GET", teamnio_url+"/admin/sync_moodle_course/teamnio_user/?username='<?php echo $username; ?>'&expires=123&user_email='<?php echo $useremail; ?>'", true);
+	    xhttp.send();
+	</script>
+	<?php
+    die;
+    // for delay to execute websocket
+    for ($i = 0; $i < 50000; $i++) {
+        echo "<div></div>";
+    }
+
+    return true; // finaly return true
+}
+
+/**
+ * Check user on Leeloo LXP.
+ * @param string email
+ * @param string teamnio_url
+ * @return mixed string
+ */
+function local_leeloolxp_lct_check_user_teamnio($email, $leeloolxpurl) {
+    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_by_email/' . $email; // get task id from teamnio
+
+    $postdata = '';
+
+    $curl = new curl;
+
+    $options = array(
+        'CURLOPT_RETURNTRANSFER' => true,
+    );
+
+    if (!$output = $curl->post($url, $postdata, $options)) {
+        return true;
+    }
+
+    return $output;
+}
+
+/**
+ * On Attempt Abandoned.
+ * @param stdClass|stdObject event
+ * @return bool true
+ */
+function local_leeloolxp_lct_attempt_abandoned(mod_quiz\event\attempt_abandoned $event) {
+    return true;
+}
+
+/**
+ * Before Footer Show.
+ * @return bool true
+ */
+function local_leeloolxp_lct_before_footer() {
+
+    global $PAGE, $USER;
+
+    $actuallink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+    if (strpos($actuallink, 'quiz/attempt.php?attempt') !== false) {
+        if ($_COOKIE['quiztracking'] != 1) {
+            $params = array(
+                'objectid' => $_GET['attempt'],
+                'relateduserid' => $USER->id,
+                'courseid' => $PAGE->course->id,
+                'context' => context_system::instance(),
+            );
+
+            $event = \mod_quiz\event\attempt_started::create($params);
+            $event->trigger();
+        }
+    }
+
+    return true;
+}
+?>

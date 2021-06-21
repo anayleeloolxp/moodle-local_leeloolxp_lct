@@ -1,0 +1,25 @@
+.tracking_startedpopupcontainer {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 9999999;
+    background: white;
+    top: 0;
+    text-align: center;
+}
+.tracking_startedpopup {
+    margin-top: 40vh;
+}
+h1#tracking_text {
+    font-size: 25px;
+    color: #74cfd0;
+}
+#tracking_text button {
+    margin: 10px;
+    border: 0;
+    color: #fff;
+    font-size: 20px;
+    padding: .5rem 3rem;
+    background-color: #74cfd0;
+    cursor: pointer;
+}
