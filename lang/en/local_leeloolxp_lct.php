@@ -33,3 +33,5 @@ $string['pluginenable'] = 'Enable Leeloo LXP Certification Tracker';
 $string['pluginenablehelp'] = 'Allow students enrolled in a course to pass remote assignments with ant-cheat capabilities';
 $string['usercreate'] = 'Enable creating a new user on Leeloo LXP';
 $string['usercreatehelp'] = 'A user will be created on Leeloo LXP matching the Moodle user, if user does not exist on Leeloo LXP';
+$string['ok'] = 'Ok';
+$string['cancel'] = 'Cancel';

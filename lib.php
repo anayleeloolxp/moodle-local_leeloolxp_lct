@@ -285,6 +285,9 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
     $taskid = $taskarray->task_id;
 
+    $ok = get_string('ok', 'local_leeloolxp_lct');
+    $cancel = get_string('cancel', 'local_leeloolxp_lct');
+
     date_default_timezone_set("America/Costa_Rica"); // GMT-6
     $workingdate = date('Y-m-d');
     $notloginmessage = get_string('not_login_message', 'local_leeloolxp_lct'); // You are not login on tracker, please login.
@@ -343,7 +346,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 if (this.readyState == 4 && this.status == 200) {
                     console.log(this.responseText);
                     if(this.responseText=="0") {
-                        document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
+                        document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>' . $ok . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>' . $cancel . '</button></div>'; ?>";
                         window.stop();
                     } else {
                         myArray.user_id = this.responseText;
@@ -402,13 +405,13 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
                        };
                     //document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
-                    document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage . '<div class=\'lct_buttons\'><button onclick=\'location.reload();\'>Ok</button></div>'; ?>";
+                    document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage . '<div class=\'lct_buttons\'><button onclick=\'location.reload();\'>' . $ok . '</button></div>'; ?>";
 
                     localStorage.setItem("status_image","orange");
                     websocket.onerror   = function(ev){ console.log(ev); };
                     websocket.onclose   = function(ev){ alert("Closed"); };
                 }else{
-                    document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
+                    document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>' . $ok . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>' . $cancel . '</button></div>'; ?>";
                     window.stop();
                 }
             }
