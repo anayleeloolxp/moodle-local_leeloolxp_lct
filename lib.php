@@ -177,8 +177,10 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $useremail = $USER->email; // user email from moodle global.
     $username = $USER->username; // username from moodle global.
 
+    $useremailbase = base64_encode($useremail);
+    $usernamebase = base64_encode($username);
+
     $course = $DB->get_record('course', array('id' => $event->courseid));
-    $userfirstnamelastname = fullname($USER);
 
     $certitrackerenable = get_config('local_leeloolxp_lct')->certitrackerenable;
 
@@ -227,7 +229,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
     $leeloolxpurl = $infoleeloolxp->data->install_url;
 
-    $userexistonteamnio = local_leeloolxp_lct_check_user_teamnio($useremail, $leeloolxpurl);
+    $userexistonteamnio = local_leeloolxp_lct_check_user_teamnio($useremailbase, $leeloolxpurl);
 
     if ($userexistonteamnio == '0') {
         if ($usercreateflag == 'no') {
@@ -235,7 +237,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         }
     }
 
-    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_lct_status_by_email/' . $useremail;
+    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_lct_status_by_email/' . $useremailbase;
     $curl = new curl;
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
@@ -261,7 +263,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         $groupname = '';
     }
 
-    $url = $leeloolxpurl . "/admin/sync_moodle_course/create_task_version/?task_name=" . urlencode($quizname) . "&username=" . urlencode($username) . "&group_name=" . urlencode($groupname) . '&email=' . urlencode($useremail) . '&activity_id=' . $event->contextinstanceid;
+    $url = $leeloolxpurl . "/admin/sync_moodle_course/create_task_version/?task_name=" . urlencode($quizname) . "&username=" . urlencode($usernamebase) . "&group_name=" . urlencode($groupname) . '&email=' . urlencode($useremailbase) . '&activity_id=' . $event->contextinstanceid;
 
     $postdata = '';
 
@@ -318,7 +320,6 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
         setCookie("quiztracking", 0, 1);
         localStorage.setItem("quiztracking",0);
-        var user_firstname_last_name = '<?php echo $userfirstnamelastname; ?>';
         var MyDate = new Date();
         var MyDateString;
         var teamnio_url = '<?php echo $leeloolxpurl; ?>';
@@ -342,7 +343,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 if (this.readyState == 4 && this.status == 200) {
                     console.log(this.responseText);
                     if(this.responseText=="0") {
-                        document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremail . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
+                        document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
                         window.stop();
                     } else {
                         myArray.user_id = this.responseText;
@@ -369,7 +370,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     }
                 }
             };
-            xhttp_S.open("GET", teamnio_url+"/admin/sync_moodle_course/login_status/?rand="+result+"&user_email="+email+'&name='+user_firstname_last_name, true);
+            xhttp_S.open("GET", teamnio_url+"/admin/sync_moodle_course/login_status/?rand="+result+"&user_email="+email, true);
             xhttp_S.send();
             //window.stop();
             //return true;
@@ -380,7 +381,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
             if (this.readyState == 4 && this.status == 200) {
                 myArray.user_id = this.responseText;
                 localStorage.setItem("user_id",myArray.user_id);
-                var logged_in_or_not =  check_login('<?php echo $useremail; ?>');
+                var logged_in_or_not =  check_login('<?php echo $useremailbase; ?>');
                 console.log('check_login');
                 console.log(logged_in_or_not);
                 if(logged_in_or_not) {
@@ -407,12 +408,12 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     websocket.onerror   = function(ev){ console.log(ev); };
                     websocket.onclose   = function(ev){ alert("Closed"); };
                 }else{
-                    document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremail . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
+                    document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>Ok</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>Cancel</button></div>'; ?>";
                     window.stop();
                 }
             }
         };
-        xhttp.open("GET", teamnio_url+"/admin/sync_moodle_course/teamnio_user/?username='<?php echo $username; ?>'&expires=123&user_email='<?php echo $useremail; ?>'", true);
+        xhttp.open("GET", teamnio_url+"/admin/sync_moodle_course/teamnio_user/?username='<?php echo $usernamebase; ?>'&expires=123&user_email='<?php echo $useremailbase; ?>'&name='<?php echo base64_encode(fullname($USER)); ?>'", true);
         xhttp.send();
     </script>
     <?php
@@ -427,12 +428,12 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
 /**
  * Check user on Leeloo LXP.
- * @param string $email email
+ * @param string $useremailbase useremailbase
  * @param string $leeloolxpurl leeloolxpurl
  * @return mixed string
  */
-function local_leeloolxp_lct_check_user_teamnio($email, $leeloolxpurl) {
-    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_by_email/' . $email; // get task id from teamnio
+function local_leeloolxp_lct_check_user_teamnio($useremailbase, $leeloolxpurl) {
+    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_by_email/' . $useremailbase; // get task id from teamnio
 
     $postdata = '';
 

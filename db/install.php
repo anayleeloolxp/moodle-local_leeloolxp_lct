@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Code to be executed after the plugin's database scheme has been installed is defined here.
  *
- * @package    local_leeloolxp_lct
- * @copyright  2020 Leeloo LXP (https://leeloolxp.com)
- * @author     Leeloo LXP <info@leeloolxp.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_leeloolxp_lct
+ * @category    upgrade
+ * @copyright   2020 Leeloo LXP <info@leeloolxp.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2021062200;
-$plugin->requires = 2013051500;
-$plugin->release = '1.0.0';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'local_leeloolxp_lct';
-$plugin->dependencies = array(
-    'tool_leeloolxp_sync' => 2019062701,
-);
+/**
+ * Custom code to be run on installing the plugin.
+ */
+function xmldb_local_leeloolxp_lct_install() {
+
+    return true;
+}
