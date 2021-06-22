@@ -48,7 +48,9 @@ class provider implements
 
         $externalfields = [
             'id' => 'privacy:metadata:id',
+            'username' => 'privacy:metadata:username',
             'email' => 'privacy:metadata:email',
+            'fullname' => 'privacy:metadata:fullname',
         ];
 
         $collection->add_external_location_link('leeloolxp_web_tat_client', $externalfields, 'privacy:metadata:leeloolxp_web_tat');
