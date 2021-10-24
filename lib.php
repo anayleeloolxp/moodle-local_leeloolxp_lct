@@ -35,6 +35,7 @@ require_once(dirname(dirname(__DIR__)) . '/config.php'); // add config as moodle
 function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted $event) {
 
     global $CFG;
+    require_once($CFG->dirroot . '/lib/filelib.php');
 
     $certitrackerenable = get_config('local_leeloolxp_lct')->certitrackerenable;
 
@@ -173,6 +174,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     global $DB;
     global $USER;
     global $CFG;
+    require_once($CFG->dirroot . '/lib/filelib.php');
 
     $useremail = $USER->email; // user email from moodle global.
     $username = $USER->username; // username from moodle global.
@@ -439,6 +441,9 @@ function local_leeloolxp_lct_check_user_teamnio($useremailbase, $leeloolxpurl) {
     $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_by_email/' . $useremailbase; // get task id from teamnio
 
     $postdata = '';
+
+    global $CFG;
+    require_once($CFG->dirroot . '/lib/filelib.php');
 
     $curl = new curl;
 
