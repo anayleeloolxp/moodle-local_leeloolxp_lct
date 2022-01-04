@@ -119,7 +119,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
             return "";
         }
 
-        var quiztracking = localStorage.getItem("quiztracking");
+        var quiztracking = sessionStorage.getItem("quiztracking");
         if( quiztracking == 1 ){
             var MyDate = new Date();
             var MyDateString;
@@ -131,7 +131,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
             myArray.working_date = '<?php echo $workingdate ?>';
             myArray.status = "0";
             myArray.task_type = "tct";
-            myArray.user_id = localStorage.getItem("user_id");
+            myArray.user_id = sessionStorage.getItem("user_id");
 
             var wsUri = "wss://teamnio.com/wssteamnio"; // websocket url
             websocket = new ReconnectingWebSocket( wsUri ); // socket reconnect
@@ -150,9 +150,9 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
                     //submit_quiz_frm();
                 }
             };
-            localStorage.setItem("status_image","gray"); // gray tracking status again
+            sessionStorage.setItem("status_image","gray"); // gray tracking status again
             document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstopmessage; ?>";
-            localStorage.setItem("quiztracking",0);
+            sessionStorage.setItem("quiztracking",0);
             setCookie("quiztracking", 0, 1);
         }
 
@@ -324,7 +324,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         }
 
         setCookie("quiztracking", 0, 1);
-        localStorage.setItem("quiztracking",0);
+        sessionStorage.setItem("quiztracking",0);
         var MyDate = new Date();
         var MyDateString;
         var teamnio_url = '<?php echo $leeloolxpurl; ?>';
@@ -352,7 +352,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         window.stop();
                     } else {
                         myArray.user_id = this.responseText;
-                        localStorage.setItem("user_id",myArray.user_id);
+                        sessionStorage.setItem("user_id",myArray.user_id);
                         var wsUri = "wss://teamnio.com/wssteamnio";
                         websocket = new ReconnectingWebSocket( wsUri );
                         websocket.onopen = function(ev) {
@@ -366,7 +366,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         websocket.onmessage = function(ev) {
                             var response        = JSON.parse(ev.data);
                             console.log(response);
-                            localStorage.setItem("quiztracking",1);
+                            sessionStorage.setItem("quiztracking",1);
                             setCookie("quiztracking", 1, 1);
                             document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
                             location.reload();
@@ -385,7 +385,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 myArray.user_id = this.responseText;
-                localStorage.setItem("user_id",myArray.user_id);
+                sessionStorage.setItem("user_id",myArray.user_id);
                 var logged_in_or_not =  check_login('<?php echo $useremailbase; ?>');
                 console.log('check_login');
                 console.log(logged_in_or_not);
@@ -409,7 +409,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     //document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
                     document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage . '<div class=\'lct_buttons\'><button onclick=\'location.reload();\'>' . $ok . '</button></div>'; ?>";
 
-                    localStorage.setItem("status_image","orange");
+                    sessionStorage.setItem("status_image","orange");
                     websocket.onerror   = function(ev){ console.log(ev); };
                     websocket.onclose   = function(ev){ alert("Closed"); };
                 }else{
