@@ -77,6 +77,9 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
 
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_HTTPHEADER' => array(
+            'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+        )
     );
 
     if (!$output = $curl->post($url, $postdata, $options)) {
@@ -245,6 +248,9 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         'CURLOPT_RETURNTRANSFER' => true,
         'CURLOPT_HEADER' => false,
         'CURLOPT_POST' => 1,
+        'CURLOPT_HTTPHEADER' => array(
+            'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+        )
     );
     if (!$userstatusonteamnio = $curl->post($url, $postdata, $options)) {
         return true;
@@ -273,6 +279,9 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_HTTPHEADER' => array(
+            'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+        )
     );
 
     if (!$output = $curl->post($url, $postdata, $options)) {
@@ -375,7 +384,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     }
                 }
             };
-            xhttp_S.open("GET", teamnio_url+"/admin/sync_moodle_course/login_status/?rand="+result+"&user_email="+email, true);
+            xhttp_S.open("GET", teamnio_url+"/admin/sync_moodle_course/login_status/?rand="+result+"&user_email="+email+"&installlogintoken=<?php echo $_COOKIE['installlogintoken']; ?>", true);
             xhttp_S.send();
             //window.stop();
             //return true;
@@ -418,7 +427,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 }
             }
         };
-        xhttp.open("GET", teamnio_url+"/admin/sync_moodle_course/teamnio_user/?username='<?php echo $usernamebase; ?>'&expires=123&user_email='<?php echo $useremailbase; ?>'&name='<?php echo base64_encode(fullname($USER)); ?>'", true);
+        xhttp.open("GET", teamnio_url+"/admin/sync_moodle_course/teamnio_user/?username='<?php echo $usernamebase; ?>'&expires=123&user_email='<?php echo $useremailbase; ?>'&name='<?php echo base64_encode(fullname($USER)); ?>'&installlogintoken=<?php echo $_COOKIE['installlogintoken']; ?>", true);
         xhttp.send();
     </script>
     <?php
@@ -449,6 +458,9 @@ function local_leeloolxp_lct_check_user_teamnio($useremailbase, $leeloolxpurl) {
 
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_HTTPHEADER' => array(
+            'LeelooLXPToken: '.get_config('local_leeloolxpapi')->leelooapitoken.''
+        )
     );
 
     if (!$output = $curl->post($url, $postdata, $options)) {
