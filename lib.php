@@ -23,10 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(dirname(dirname(__DIR__)) . '/config.php'); // add config as moodle instance
-
 /**
  * Attempt submited event for quiz module.
  * @param mod_quiz\event\attempt_submitted $event
@@ -78,7 +74,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
@@ -162,7 +158,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
     for ($i = 0; $i < 50000; $i++) {
         echo "<div></div>";
     }
-    return true; // finaly return true
+    return true; // Finaly return true.
 }
 
 /**
@@ -177,8 +173,8 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     global $CFG;
     require_once($CFG->dirroot . '/lib/filelib.php');
 
-    $useremail = $USER->email; // user email from moodle global.
-    $username = $USER->username; // username from moodle global.
+    $useremail = $USER->email; // User email from moodle global.
+    $username = $USER->username; // Username from moodle global.
 
     $useremailbase = base64_encode($useremail);
     $usernamebase = base64_encode($username);
@@ -194,7 +190,19 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $attemptid = $event->objectid;
 
     if (isset($attemptid) && isset($attemptid) != '') {
-        $checksynced = $DB->get_record_sql("SELECT count(sync.teamnio_task_id) synced FROM {quiz_attempts} a left join {course_modules} cm on a.quiz = cm.instance left join {modules} m on m.id = cm.module left join {tool_leeloolxp_sync} sync on sync.activityid = cm.id where a.id = ? and m.name = ? and sync.enabled = ?", array($attemptid, 'quiz', 1));
+        $checksynced = $DB->get_record_sql(
+            "SELECT
+                count(sync.teamnio_task_id) synced
+            FROM {quiz_attempts} a
+            left join {course_modules} cm
+                on a.quiz = cm.instance
+            left join {modules} m
+                on m.id = cm.module
+            left join {tool_leeloolxp_sync} sync
+                on sync.activityid = cm.id
+            where a.id = ? and m.name = ? and sync.enabled = ?",
+            array($attemptid, 'quiz', 1)
+        );
 
         if ($checksynced->synced == 0) {
             return true;
@@ -247,7 +255,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         'CURLOPT_HEADER' => false,
         'CURLOPT_POST' => 1,
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
     if (!$userstatusonteamnio = $curl->post($url, $postdata, $options)) {
@@ -259,7 +267,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
     $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
     $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
-    $quizname = $quiz->name; // moodle quiz  name.
+    $quizname = $quiz->name; // Moodle quiz  name.
     $course = $DB->get_record('course', array('id' => $event->courseid));
     $groupnamequery = $DB->get_record('groups', array('courseid' => $course->id));
 
@@ -269,7 +277,12 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         $groupname = '';
     }
 
-    $url = $leeloolxpurl . "/admin/sync_moodle_course/create_task_version/?task_name=" . urlencode($quizname) . "&username=" . urlencode($usernamebase) . "&group_name=" . urlencode($groupname) . '&email=' . urlencode($useremailbase) . '&activity_id=' . $event->contextinstanceid;
+    $url = $leeloolxpurl .
+        "/admin/sync_moodle_course/create_task_version/?task_name=" . urlencode($quizname) .
+        "&username=" . urlencode($usernamebase) .
+        "&group_name=" . urlencode($groupname) .
+        '&email=' . urlencode($useremailbase) .
+        '&activity_id=' . $event->contextinstanceid;
 
     $postdata = '';
 
@@ -278,7 +291,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
@@ -297,7 +310,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $ok = get_string('ok', 'local_leeloolxp_lct');
     $cancel = get_string('cancel', 'local_leeloolxp_lct');
 
-    date_default_timezone_set("America/Costa_Rica"); // GMT-6
+    date_default_timezone_set("America/Costa_Rica"); // GMT-6.
     $workingdate = date('Y-m-d');
     $notloginmessage = get_string('not_login_message', 'local_leeloolxp_lct'); // You are not login on tracker, please login.
     $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); // Tracking started.
@@ -413,7 +426,6 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         console.log(response);
 
                     };
-                    //document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
                     document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage . '<div class=\'lct_buttons\'><button onclick=\'location.reload();\'>' . $ok . '</button></div>'; ?>";
 
                     sessionStorage.setItem("status_image", "orange");
@@ -434,12 +446,12 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     </script>
 <?php
     die;
-    // for delay to execute websocket
+    // For delay to execute websocket.
     for ($i = 0; $i < 50000; $i++) {
         echo "<div></div>";
     }
 
-    return true; // finaly return true
+    return true;
 }
 
 /**
@@ -449,7 +461,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
  * @return mixed string
  */
 function local_leeloolxp_lct_check_user_teamnio($useremailbase, $leeloolxpurl) {
-    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_by_email/' . $useremailbase; // get task id from teamnio
+    $url = $leeloolxpurl . '/admin/sync_moodle_course/check_user_by_email/' . $useremailbase;
 
     $postdata = '';
 
@@ -461,7 +473,7 @@ function local_leeloolxp_lct_check_user_teamnio($useremailbase, $leeloolxpurl) {
     $options = array(
         'CURLOPT_RETURNTRANSFER' => true,
         'CURLOPT_HTTPHEADER' => array(
-            'LeelooLXPToken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
+            'Leeloolxptoken: ' . get_config('local_leeloolxpapi')->leelooapitoken . ''
         )
     );
 
