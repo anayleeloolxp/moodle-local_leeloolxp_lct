@@ -91,10 +91,12 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
     $trackerstopmessage = get_string('tracker_stop_message', 'local_leeloolxp_lct'); // Tracking stop on exam.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
 ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
     <!-- Javascript code for websocket communication with DA and Teamnio too -->
+
+    <?php
+    echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/lct/css/lct.css' . '" />
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
-    <?php echo '<script type="text/javascript">
+    <script type="text/javascript">
         function setCookie(cname, cvalue, exdays) {
             var d = new Date();
             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -318,10 +320,12 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); // Tracking started.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
     ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
     <!-- websocket communication with javascript  -->
+
+<?php
+    echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/lct/css/lct.css' . '" />
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
-<?php echo '<script type="text/javascript">
+    <script type="text/javascript">
         function setCookie(cname, cvalue, exdays) {
             var d = new Date();
             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
