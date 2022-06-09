@@ -94,7 +94,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
     <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
     <!-- Javascript code for websocket communication with DA and Teamnio too -->
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
-    <script type="text/javascript">
+    <?php echo '<script type="text/javascript">
         function setCookie(cname, cvalue, exdays) {
             var d = new Date();
             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -104,10 +104,11 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
 
         function getCookie(cname) {
             var name = cname + "=";
-            var ca = document.cookie.split(';');
+            var ca = document.cookie.split(';
+    ');
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
-                while (c.charAt(0) == ' ') {
+                while (c.charAt(0) == " ") {
                     c = c.substring(1);
                 }
                 if (c.indexOf(name) == 0) {
@@ -121,12 +122,13 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
         if (quiztracking == 1) {
             var MyDate = new Date();
             var MyDateString;
-            var teamnio_url = '<?php echo $leeloolxpurl; ?>';
+            var teamnio_url = ' . $leeloolxpurl . ';
             MyDate.setDate(MyDate.getDate());
-            MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth() + 1)).slice(-2) + "-" + ("0" + MyDate.getDate()).slice(-2);
+            MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth() + 1)).slice(-2) + "-" +
+             ("0" + MyDate.getDate()).slice(-2);
             var myArray = {};
-            myArray.task_id = "<?php echo $taskid; ?>";
-            myArray.working_date = '<?php echo $workingdate ?>';
+            myArray.task_id = "' . $taskid . '";
+            myArray.working_date = ' . $workingdate . ';
             myArray.status = "0";
             myArray.task_type = "tct";
             myArray.user_id = sessionStorage.getItem("user_id");
@@ -144,16 +146,16 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
             websocket.onmessage = function(ev) {
                 var response = JSON.parse(ev.data);
                 console.log(response);
-                if (response.message.status == '1') {
+                if (response.message.status == "1") {
                     //submit_quiz_frm();
                 }
             };
             sessionStorage.setItem("status_image", "gray"); // gray tracking status again
-            document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstopmessage; ?>";
+            document.getElementById("tracking_text").innerHTML = "' . $trackerstopmessage . '";
             sessionStorage.setItem("quiztracking", 0);
             setCookie("quiztracking", 0, 1);
         }
-    </script>
+    </script>'; ?>
     <?php
     for ($i = 0; $i < 50000; $i++) {
         echo "<div></div>";
@@ -319,7 +321,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     <link rel="stylesheet" type="text/css" href="<?php echo $CFG->wwwroot . '/local/lct/css/lct.css'; ?>" />
     <!-- websocket communication with javascript  -->
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
-    <script type="text/javascript">
+<?php echo '<script type="text/javascript">
         function setCookie(cname, cvalue, exdays) {
             var d = new Date();
             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -329,10 +331,11 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
         function getCookie(cname) {
             var name = cname + "=";
-            var ca = document.cookie.split(';');
+            var ca = document.cookie.split(';
+    ');
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
-                while (c.charAt(0) == ' ') {
+                while (c.charAt(0) == " ") {
                     c = c.substring(1);
                 }
                 if (c.indexOf(name) == 0) {
@@ -346,13 +349,14 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         sessionStorage.setItem("quiztracking", 0);
         var MyDate = new Date();
         var MyDateString;
-        var teamnio_url = '<?php echo $leeloolxpurl; ?>';
+        var teamnio_url = ' . $leeloolxpurl . ';
         MyDate.setDate(MyDate.getDate());
-        MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth() + 1)).slice(-2) + "-" + ("0" + MyDate.getDate()).slice(-2);
+        MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth() + 1)).slice(-2) + "-" +
+         ("0" + MyDate.getDate()).slice(-2);
         var myArray = {};
-        myArray.task_id = "<?php echo $taskid; ?>";
+        myArray.task_id = "' . $taskid . '";
 
-        myArray.working_date = '<?php echo $workingdate ?>';
+        myArray.working_date = ' . $workingdate . ';
         myArray.status = "1";
 
         function check_login(email) {
@@ -368,7 +372,10 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 if (this.readyState == 4 && this.status == 200) {
                     console.log(this.responseText);
                     if (this.responseText == "0") {
-                        document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>' . $ok . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>' . $cancel . '</button></div>'; ?>";
+                    document.getElementById("tracking_text").innerHTML = "' . $notloginmessage . '
+                    <div class="lct_buttons"><button onclick="check_login("'
+        . $useremailbase . '") >' . $ok . '</button><button onclick="location.href = "'
+        . $CFG->wwwroot . '" > ' . $cancel . '</button></div>; ";
                         window.stop();
                     } else {
                         myArray.user_id = this.responseText;
@@ -378,7 +385,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         websocket.onopen = function(ev) {
                             var message_input = JSON.stringify(myArray);
                             var msg = {
-                                type: 'quiztype',
+                                type: "quiztype",
                                 message: JSON.parse(message_input),
                             };
                             websocket.send(JSON.stringify(msg));
@@ -388,14 +395,16 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                             console.log(response);
                             sessionStorage.setItem("quiztracking", 1);
                             setCookie("quiztracking", 1, 1);
-                            document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage; ?>";
+                            document.getElementById("tracking_text").innerHTML = "' . $trackerstartmessage . '";
                             location.reload();
                         };
                         return true;
                     }
                 }
             };
-            xhttp_S.open("GET", teamnio_url + "/admin/sync_moodle_course/login_status/?rand=" + result + "&user_email=" + email + "&installlogintoken=<?php echo $_COOKIE['installlogintoken']; ?>", true);
+            xhttp_S.open("GET", teamnio_url + "/admin/sync_moodle_course/login_status/?rand=" +
+                result + "&user_email=" + email +
+                "&installlogintoken=' . $_COOKIE['installlogintoken'] . '", true);
             xhttp_S.send();
             //window.stop();
             //return true;
@@ -406,8 +415,8 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
             if (this.readyState == 4 && this.status == 200) {
                 myArray.user_id = this.responseText;
                 sessionStorage.setItem("user_id", myArray.user_id);
-                var logged_in_or_not = check_login('<?php echo $useremailbase; ?>');
-                console.log('check_login');
+                var logged_in_or_not = check_login(' . $useremailbase . ');
+                //console.log("check_login");
                 console.log(logged_in_or_not);
                 if (logged_in_or_not) {
                     var wd = "";
@@ -416,7 +425,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     websocket.onopen = function(ev) {
                         var message_input = JSON.stringify(myArray);
                         var msg = {
-                            type: 'quiztype',
+                            type: "quiztype",
                             message: JSON.parse(message_input),
                         };
                         websocket.send(JSON.stringify(msg));
@@ -426,7 +435,10 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         console.log(response);
 
                     };
-                    document.getElementById("tracking_text").innerHTML = "<?php echo $trackerstartmessage . '<div class=\'lct_buttons\'><button onclick=\'location.reload();\'>' . $ok . '</button></div>'; ?>";
+                    document.getElementById("tracking_text").innerHTML = "' . $trackerstartmessage .
+        '<div class="lct_buttons" ><button onclick="location.reload();"> '
+        . $ok . '</button></div>' . ' ";
+
 
                     sessionStorage.setItem("status_image", "orange");
                     websocket.onerror = function(ev) {
@@ -436,15 +448,21 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         alert("Closed");
                     };
                 } else {
-                    document.getElementById("tracking_text").innerHTML = "<?php echo $notloginmessage . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase . '\")\'>' . $ok . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>' . $cancel . '</button></div>'; ?>";
+
+                    document.getElementById("tracking_text").innerHTML = "' . $notloginmessage . '
+                    <div class="lct_buttons"><button onclick="check_login("'
+        . $useremailbase . '") >' . $ok . '</button><button onclick="location.href = "'
+        . $CFG->wwwroot . '" > ' . $cancel . '</button></div>; ";
                     window.stop();
                 }
             }
         };
-        xhttp.open("GET", teamnio_url + "/admin/sync_moodle_course/teamnio_user/?username='<?php echo $usernamebase; ?>'&expires=123&user_email='<?php echo $useremailbase; ?>'&name='<?php echo base64_encode(fullname($USER)); ?>'&installlogintoken=<?php echo $_COOKIE['installlogintoken']; ?>", true);
+        xhttp.open("GET", teamnio_url + "/admin/sync_moodle_course/teamnio_user/?username=' .
+        $usernamebase . '&expires=123&user_email=' . $useremailbase . '&name='
+        . base64_encode(fullname($USER)) . '&installlogintoken='
+        . $_COOKIE['installlogintoken'] . '", true);
         xhttp.send();
-    </script>
-<?php
+    </script>';
     die;
     // For delay to execute websocket.
     for ($i = 0; $i < 50000; $i++) {
