@@ -90,10 +90,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
 
     $trackerstopmessage = get_string('tracker_stop_message', 'local_leeloolxp_lct'); // Tracking stop on exam.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
-?>
-    <!-- Javascript code for websocket communication with DA and Teamnio too -->
 
-    <?php
     echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/lct/css/lct.css' . '" />
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
     <script type="text/javascript">
@@ -157,8 +154,8 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
             sessionStorage.setItem("quiztracking", 0);
             setCookie("quiztracking", 0, 1);
         }
-    </script>'; ?>
-    <?php
+    </script>';
+
     for ($i = 0; $i < 50000; $i++) {
         echo "<div></div>";
     }
@@ -319,10 +316,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $notloginmessage = get_string('not_login_message', 'local_leeloolxp_lct'); // You are not login on tracker, please login.
     $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); // Tracking started.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
-    ?>
-    <!-- websocket communication with javascript  -->
 
-<?php
     echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/lct/css/lct.css' . '" />
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
     <script type="text/javascript">
