@@ -91,7 +91,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
     $trackerstopmessage = get_string('tracker_stop_message', 'local_leeloolxp_lct'); // Tracking stop on exam.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
 
-    echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/lct/css/lct.css' . '" />
+    echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/leeloolxp_lct/css/lct.css' . '" />
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
     <script type="text/javascript">
         function setCookie(cname, cvalue, exdays) {
@@ -316,7 +316,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
     $trackerstartmessage = get_string('tracker_start_message', 'local_leeloolxp_lct'); // Tracking started.
     echo '<div class="tracking_startedpopupcontainer"><div class="tracking_startedpopup"><h1 id="tracking_text"></h1></div></div>';
 
-    echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/lct/css/lct.css' . '" />
+    echo '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . '/local/leeloolxp_lct/css/lct.css' . '" />
     <script type="text/javascript" src="https://leeloolxp.com/socket_server/reconnecting-websocket.js"></script>
     <script type="text/javascript">
         function setCookie(cname, cvalue, exdays) {
