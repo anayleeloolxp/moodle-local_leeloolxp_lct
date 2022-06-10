@@ -103,8 +103,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
 
         function getCookie(cname) {
             var name = cname + "=";
-            var ca = document.cookie.split(';
-    ');
+            var ca = document.cookie.split(" ");
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
                 while (c.charAt(0) == " ") {
@@ -121,7 +120,7 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
         if (quiztracking == 1) {
             var MyDate = new Date();
             var MyDateString;
-            var teamnio_url = ' . $leeloolxpurl . ';
+            var teamnio_url = "' . $leeloolxpurl . '";
             MyDate.setDate(MyDate.getDate());
             MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth() + 1)).slice(-2) + "-" +
              ("0" + MyDate.getDate()).slice(-2);
@@ -329,8 +328,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
 
         function getCookie(cname) {
             var name = cname + "=";
-            var ca = document.cookie.split(';
-    ');
+            var ca = document.cookie.split(" ");
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
                 while (c.charAt(0) == " ") {
@@ -347,7 +345,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
         sessionStorage.setItem("quiztracking", 0);
         var MyDate = new Date();
         var MyDateString;
-        var teamnio_url = ' . $leeloolxpurl . ';
+        var teamnio_url = "' . $leeloolxpurl . '";
         MyDate.setDate(MyDate.getDate());
         MyDateString = MyDate.getFullYear() + "-" + ("0" + (MyDate.getMonth() + 1)).slice(-2) + "-" +
          ("0" + MyDate.getDate()).slice(-2);
@@ -370,10 +368,11 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 if (this.readyState == 4 && this.status == 200) {
                     console.log(this.responseText);
                     if (this.responseText == "0") {
-                    document.getElementById("tracking_text").innerHTML = "' . $notloginmessage . '
-                    <div class="lct_buttons"><button onclick="check_login("'
-        . $useremailbase . '") >' . $ok . '</button><button onclick="location.href = "'
-        . $CFG->wwwroot . '" > ' . $cancel . '</button></div>; ";
+                        document.getElementById("tracking_text").innerHTML = "' .
+        $notloginmessage . '<div class=\'lct_buttons\'>
+                        <button onclick=\'check_login(\"' . $useremailbase . '\")\'>' . $ok . '</button>
+                        <button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>' . $cancel . '</button></div>";
+
                         window.stop();
                     } else {
                         myArray.user_id = this.responseText;
@@ -413,7 +412,7 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
             if (this.readyState == 4 && this.status == 200) {
                 myArray.user_id = this.responseText;
                 sessionStorage.setItem("user_id", myArray.user_id);
-                var logged_in_or_not = check_login(' . $useremailbase . ');
+                var logged_in_or_not = check_login("' . $useremailbase . '");
                 //console.log("check_login");
                 console.log(logged_in_or_not);
                 if (logged_in_or_not) {
@@ -433,11 +432,9 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         console.log(response);
 
                     };
-                    document.getElementById("tracking_text").innerHTML = "' . $trackerstartmessage .
-        '<div class="lct_buttons" ><button onclick="location.reload();"> '
-        . $ok . '</button></div>' . ' ";
-
-
+                    document.getElementById("tracking_text").innerHTML = "' .
+        $trackerstartmessage . '<div class=\'lct_buttons\'>
+                     <button onclick=\'location.reload();\'>' . $ok . '</button></div> "
                     sessionStorage.setItem("status_image", "orange");
                     websocket.onerror = function(ev) {
                         console.log(ev);
@@ -447,11 +444,13 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     };
                 } else {
 
-                    document.getElementById("tracking_text").innerHTML = "' . $notloginmessage . '
-                    <div class="lct_buttons"><button onclick="check_login("'
-        . $useremailbase . '") >' . $ok . '</button><button onclick="location.href = "'
-        . $CFG->wwwroot . '" > ' . $cancel . '</button></div>; ";
+                    document.getElementById("tracking_text").innerHTML = "' .
+        $notloginmessage . '<div class=\'lct_buttons\'>
+                     <button onclick=\'check_login(\"' . $useremailbase . '\")\'>'
+        . $ok . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>'
+        . $cancel . '</button></div> "
                     window.stop();
+
                 }
             }
         };
