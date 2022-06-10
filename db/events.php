@@ -28,21 +28,21 @@ defined('MOODLE_INTERNAL') || die();
 $observers = array(
     array(
         'eventname' => '\mod_quiz\event\attempt_submitted',
-        'includefile' => '/local/lct/lib.php',
+        'includefile' => '/local/leeloolxp_lct/lib.php',
         'callback' => 'local_leeloolxp_lct_attempt_submitted',
         'internal' => false,
     ),
 
     array(
         'eventname' => '\mod_quiz\event\attempt_started',
-        'includefile' => '/local/lct/lib.php',
+        'includefile' => '/local/leeloolxp_lct/lib.php',
         'callback' => 'local_leeloolxp_lct_attempt_started',
         'internal' => false,
     ),
 
     array(
         'eventname' => '\mod_quiz\event\attempt_abandoned',
-        'includefile' => '/local/lct/lib.php',
+        'includefile' => '/local/leeloolxp_lct/lib.php',
         'callback' => 'local_leeloolxp_lct_attempt_abandoned',
         'internal' => false,
     ),

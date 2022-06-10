@@ -51,7 +51,7 @@ class provider implements
             'fullname' => 'privacy:metadata:fullname',
         ];
 
-        $collection->add_external_location_link('leeloolxp_web_tat_client', $externalfields, 'privacy:metadata:leeloolxp_web_tat');
+        $collection->add_external_location_link('leeloolxp_lct_client', $externalfields, 'privacy:metadata:leeloolxp_lct');
 
         return $collection;
     }
