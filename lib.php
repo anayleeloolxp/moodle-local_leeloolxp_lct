@@ -205,8 +205,8 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 on m.id = cm.module
             left join {tool_leeloolxp_sync} sync
                 on sync.activityid = cm.id
-            where a.id = ? and m.name = ? and sync.enabled = ?",
-            array($attemptid, 'quiz', 1)
+            where a.id = ? and m.name = ? and sync.enabled = ? and sync.is_quiz = ? ",
+            array($attemptid, 'quiz', 1, 1)
         );
 
         if ($checksynced->synced == 0) {
