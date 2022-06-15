@@ -126,7 +126,12 @@ function local_leeloolxp_lct_attempt_submitted(mod_quiz\event\attempt_submitted 
              ("0" + MyDate.getDate()).slice(-2);
             var myArray = {};
             myArray.task_id = "' . $taskid . '";
-            myArray.working_date = ' . $workingdate . ';
+            dateObj = new Date();
+            month = String(dateObj.getMonth() + 1).padStart(2, "0");
+            day = String(dateObj.getDate()).padStart(2, "0");
+            year = dateObj.getFullYear();
+            workingdate = year + "-" + month + "-" + day;
+            myArray.working_date = workingdate;
             myArray.status = "0";
             myArray.task_type = "tct";
             myArray.user_id = sessionStorage.getItem("user_id");
@@ -351,8 +356,13 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
          ("0" + MyDate.getDate()).slice(-2);
         var myArray = {};
         myArray.task_id = "' . $taskid . '";
+        dateObj = new Date();
+        month = String(dateObj.getMonth() + 1).padStart(2, "0");
+        day = String(dateObj.getDate()).padStart(2, "0");
+        year = dateObj.getFullYear();
+        workingdate = year + "-" + month + "-" + day;
 
-        myArray.working_date = ' . $workingdate . ';
+        myArray.working_date = workingdate;
         myArray.status = "1";
 
         function check_login(email) {
