@@ -1,0 +1,27 @@
+{
+    "git.enableSmartCommit": true,
+    "security.workspace.trust.untrustedFiles": "open",
+    "diffEditor.wordWrap": "on",
+    "editor.wordWrap": "on",
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "files.trimTrailingWhitespace": true,
+    "phpSniffer.standard": "moodle",
+    "[php]": {
+      "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "files.associations": {
+      "*.module": "php"
+    },
+    "intelephense.files.associations": ["*.php", "*.phtml"],
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "intelephense.format.braces": "k&r",
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "[css]": {
+      "editor.defaultFormatter": "stylelint.vscode-stylelint"
+    },
+    "git.confirmSync": false,
+    "phpSniffer.executablesFolder": "C:\\Users\\DELL\\AppData\\Roaming\\Composer\\vendor\\bin\\"
+  }

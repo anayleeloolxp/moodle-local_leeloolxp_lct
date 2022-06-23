@@ -378,10 +378,11 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                 if (this.readyState == 4 && this.status == 200) {
                     console.log(this.responseText);
                     if (this.responseText == "0") {
-                        document.getElementById("tracking_text").innerHTML = "' .
-        $notloginmessage . '<div class=\'lct_buttons\'>
-                        <button onclick=\'check_login(\"' . $useremailbase . '\")\'>' . $ok . '</button>
-                        <button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>' . $cancel . '</button></div>";
+                        document.getElementById("tracking_text").innerHTML = "' . $notloginmessage
+        . '<div class=\'lct_buttons\'><button onclick=\'check_login(\" ' . $useremailbase
+        . '\")\'> ' . $ok
+        . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot
+        . '\";\'> ' . $cancel . '</button></div>";
 
                         window.stop();
                     } else {
@@ -442,9 +443,9 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                         console.log(response);
 
                     };
-                    document.getElementById("tracking_text").innerHTML = "' .
-        $trackerstartmessage . '<div class=\'lct_buttons\'>
-                     <button onclick=\'location.reload();\'>' . $ok . '</button></div> "
+                    document.getElementById("tracking_text").innerHTML = "' . $trackerstartmessage
+        . '<div class=\'lct_buttons\'> <button onclick=\'location.reload();\'>' . $ok
+        . '</button></div> "
                     sessionStorage.setItem("status_image", "orange");
                     websocket.onerror = function(ev) {
                         console.log(ev);
@@ -454,11 +455,11 @@ function local_leeloolxp_lct_attempt_started(mod_quiz\event\attempt_started $eve
                     };
                 } else {
 
-                    document.getElementById("tracking_text").innerHTML = "' .
-        $notloginmessage . '<div class=\'lct_buttons\'>
-                     <button onclick=\'check_login(\"' . $useremailbase . '\")\'>'
-        . $ok . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot . '\";\'>'
-        . $cancel . '</button></div> "
+                    document.getElementById("tracking_text").innerHTML = "' . $notloginmessage
+        . '<div class=\'lct_buttons\'><button onclick=\'check_login(\"' . $useremailbase
+        . '\")\'>' . $ok
+        . '</button><button onclick=\'location.href = \"' . $CFG->wwwroot
+        . '\";\'>' . $cancel . '</button></div> "
                     window.stop();
 
                 }
